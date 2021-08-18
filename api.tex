@@ -1,0 +1,128 @@
+\section{Detailed API}
+
+This project proposes the design and implementation of a modern C++ template
+interface for \dft\ within \boostmath\ library. The implementation will consist
+of a combination of routines written by the author based on well known \fft\
+algorithms and oriented to solve the \dft\ problem as presented in the
+Definition \ref{def:dft} for any data type that satisfies the Ring axioms, 
+and a back-end to the \fftw\ library for the special cases of
+the complex and real number types supported by \fftw. We aim to design an \api\
+that is flexible and powerful, so that the implementation can be adapted
+seamlessly to different back-ends without significant performance losses.
+
+\lstset{columns=flullflexible,basicstyle=\ttfamily}
+
+A possible user interface for 1-dimensional \dft{}s could 
+consist of a set of overloads of a single function \texttt{dft}.
+Two of which could handle the general case of \dft\ as in Definition
+\ref{def:dft}: see
+Listings \ref{ls:dft1} for the in-place transformation 
+and Listings \ref{ls:dft2} for a transformation that is saved into a different memory
+location. The size of the \dft\ is deduced 
+as $n=$\texttt{std::distance(beg1,end1)} and the root of unity \texttt{w} for this
+size must be provided by the user. These routines can compute \dft{}s for any
+type that satisfy the Ring axioms as well as complex numbers.
+
+\begin{lstlisting}[language=C++,label=ls:dft1,caption=General case of the DFT in-place.]
+template<class InputIterator, class T> 
+void 
+dft(InputIterator beg1, InputIterator end1, 
+    T w /* root unity */ );
+\end{lstlisting}
+
+% out-of-place DFT, the size is deduced by std::distance(beg1,end1)
+% the root of unity is supplied by the user
+\begin{lstlisting}[language=C++,label=ls:dft2,caption=General case of the DFT out-of-place]
+template<class InputIterator, class OutputIterator, class T> 
+void 
+dft(InputIterator beg1, InputIterator end1,
+    OutputIterator beg2, 
+    T w /* root unity */ );
+\end{lstlisting}
+
+\noindent Two other overloads of the complex \dft{}s are needed to release the user
+from the burden of computing the root of unity by himself and explicitely call
+the specialized back-end: see
+Listings \ref{ls:complex_dft1} and \ref{ls:complex_dft2}. The size of the \dft\
+is again deduced as $n=$\texttt{std::distance(beg1,end1)} and
+\texttt{complex\_dft}
+is an \texttt{enum class} that can have two states: \texttt{forward} or
+\texttt{backwards} that correspond to the roots of unity 
+$\exp(-i\, 2\pi/n)$
+and 
+$\exp(+i\, 2\pi/n)$ respectively,
+where $i=\sqrt{-1}$.
+% in-place complex DFT, the size is deduced by n=std::distance(beg1,end1)
+% the root of unity is deduced as exp(-I 2 pi/n) for t=forward and exp(I 2 pi/n)
+% for t = backwards
+\begin{lstlisting}[language=C++,label=ls:complex_dft1,caption=DFT for complex numbers in-place.]
+template<class InputIterator> 
+void
+dft(InputIterator beg1, InputIterator end1, 
+    complex_dft t);
+\end{lstlisting}
+
+% out-of-place complex DFT, the size is deduced by n=std::distance(beg1,end1)
+% the root of unity is deduced as exp(-I 2 pi/n) for t=forward and exp(I 2 pi/n)
+% for t = backwards
+\begin{lstlisting}[language=C++,label=ls:complex_dft2,caption=DFT for complex numbers out-of-place.]
+template<class InputIterator, class OutputIterator> 
+void
+dft(InputIterator beg1, InputIterator end1, 
+    OutputIterator beg2, 
+    complex_dft t);
+\end{lstlisting}
+
+\noindent Finally there will be another routine to compute convolutions: see
+Listings \ref{ls:convolution}. That computes the \cdc\ of size
+$n=$\texttt{std::distance(beg1,end1)}, using the root of unity \texttt{w} provided by the
+user or, if omited, deduced as $\exp(-i\, 2\pi/n)$ for complex and real types only.
+% Convolution, the size is deduced by n=std::distance(beg1,end1)
+% the root of unity is optional and can be internally deduced for T = Real or
+% complex<Real>
+\begin{lstlisting}[language=C++,label=ls:convolution,caption=Convolution routine.]
+template<class InputIterator, class OutputIterator, class T> 
+void
+convolution(InputIterator beg1, InputIterator end1, 
+            InputIterator beg2,
+            OutputIterator beg3, 
+            T w /* root of unity, optional */);
+\end{lstlisting}
+
+\subsection{Deliverables}
+
+This project proposes to deliver at the end of the \gsoc-2021 a C++ library for
+computing \fft{}s, with the following components:
+\begin{itemize}
+    \item A template user interface for 1-dimensional \dft.
+    \item A template user interface for computing convolutions.
+    \item A back-end that wraps \fftw\ routines to handle the standard complex types
+    ie. \verb|std::complex| instantiated on \verb|float|,
+    \verb|double| and \verb|long double|.
+    \item A general purpose back-end, based on 
+    templates routines for computing \dft\ using the algorithms
+    mentioned in the previous section based on the weaker notion of rings and
+    roots of unity. 
+    This back-end already provides support for \ntt\ without the need to write
+    specialized routines.
+    \item Specialization for complex to complex \dft, with the use of the \fftw\
+    back-end whenever possible,
+    and tested support for Boost Multiprecision types such as
+    \verb|cpp_complex|.
+    \item Specialization for real to complex \dft, with the use of the \fftw\
+    back-end whenever possible/
+    \item Unit tests and benchmarks.
+    \item Documentation with examples.
+    %\item support for $D$-dimensional \dft{}s,
+    %\item (if time permits) with multithreaded capabilities.
+\end{itemize}
+
+\subsection{Future outlook}
+If this project is successful we will consider for next year to include support
+for multi-dimensional \dft{}s and the design and implementation for
+parallel \fft\ interfaces: shared and distributed memory. 
+The $D$-dimensional \mpi\ \dft\ is an issue we look forward to tackle
+using a scalable $(D-1)$-dimensional domain decomposition,
+similar to that proposed by \cite{pippig_13}.
+%built on top of the \boostmpi\ library
+%and the 1-dimensional \fft\ utilities of \boostmath\ to be developed this year.

@@ -1,0 +1,16 @@
+\section{Quickstart}
+
+Our interface was designed for easy of use. The user can start performing
+complex FFTs by just calling one of the \texttt{std::transform}-like routines
+\texttt{forward} or \texttt{backward}. See listings
+\ref{ls:complex_dft_transform}
+
+\begin{lstlisting}[language=C++,label=ls:complex_dft_transform,caption=Simple complex FFT
+transform.]
+using fft_transform = ::boost::math::fft::bsl_transform;
+std::vector< std::complex<double> > A{1.,2.,3.,4.},B;
+fft_transform::forward(A.cbegin(),A.cend(),std::back_inserter(B));
+fft_transform::backward(B.cbegin(),B.cend(),B.begin());
+\end{lstlisting}
+
+

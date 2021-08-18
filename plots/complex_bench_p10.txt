@@ -1,0 +1,15 @@
+bench_bsl/100         1551312 ns      1551299 ns          451
+bench_bsl/1000       23468627 ns     23468455 ns           30
+bench_bsl/10000     314547041 ns    314543280 ns            2
+bench_bsl/100000   3980728963 ns   3980670194 ns            1
+bench_bsl/1000000 47987170116 ns  47986817193 ns            1
+bench_gsl/100            3204 ns         3204 ns       219870
+bench_gsl/1000          32060 ns        32060 ns        22060
+bench_gsl/10000        328081 ns       328080 ns         2107
+bench_gsl/100000      3776669 ns      3776626 ns          188
+bench_gsl/1000000    50451054 ns     50450915 ns           14
+bench_fftw/100          52591 ns        52591 ns        13303
+bench_fftw/1000        233016 ns       233013 ns         2955
+bench_fftw/10000       898643 ns       898630 ns          777
+bench_fftw/100000     3362857 ns      3362728 ns          208
+bench_fftw/1000000   18332311 ns     18332131 ns           39

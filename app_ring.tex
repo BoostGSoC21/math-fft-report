@@ -1,0 +1,35 @@
+\section{Abstract Ring}\label{app:ring}
+
+\begin{definition}
+    A ring $\Ring$ is a set with two binary operators: addition $+\colon
+    \Ring\times\Ring\to\Ring$ and multiplication $\cdot\colon\Ring\times\Ring\to\Ring$ such that
+    \begin{enumerate}
+        \item $\Ring$ is an Abelian group under addition,
+        \begin{itemize}
+            \item (closure) for any $a,b \in \Ring$: $a+b\in\Ring$;
+            \item (associativity) for any $a,b,c \in \Ring$: $a+(b+c) = (a+b)+c$;
+            \item (neutral) there exists $0\in \Ring$ such that for any $a\in\Ring$:
+            $a+0 = 0+a = a$;
+            \item (inverse) for any $a\in\Ring$ there exists $-a \in\Ring$ such
+            that $a+(-a)=(-a)+a = 0$;
+            \item (commutativity) for any $a,b\in\Ring$: $a+b=b+a$.
+        \end{itemize}
+        \item $\Ring$ is a monoid under multiplication,
+        \begin{itemize}
+            \item (closure) for any $a,b \in \Ring$: $a\cdot b\in\Ring$;
+            \item (associativity) for any $a,b,c \in \Ring$: $a\cdot(b\cdot c) =
+            (a\cdot b)\cdot c$;
+            \item (neutral) there exists $1\in \Ring$ such that for any $a\in\Ring$:
+            $a\cdot 1 = 1\cdot a = a$.
+        \end{itemize}
+        \item addition and multiplication are compatible,
+        \begin{itemize}
+            \item (left distributivity) for any $a,b,c\in\Ring$: $a\cdot(b+c) = a\cdot
+            b+a\cdot c$;
+            \item (right distributivity) for any $a,b,c\in\Ring$: $(b+c)\cdot a =
+            b\cdot a + c\cdot a$.
+        \end{itemize}
+    \end{enumerate}
+\end{definition}
+
+% note: If the multiplication was an Abelian group, then the ring becomes a field

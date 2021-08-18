@@ -1,0 +1,29 @@
+\section{Introduction}
+
+Fast Fourier Transform (\fft) algorithms are among the most important of the XXth
+Century. Applications range widely from engineering to pure science.
+For example: image and sound signal analysis and lossy compression.
+jpg and mp3 are file formats that encode the signal using its Fourier modes.
+In astrophysics \fft\ is used to solve the differential field
+equations of Newtonian Gravity and General Relativity as well, in huge N-body
+simulations of the cosmological evolution of the universe. While the Fourier
+modes of those fields, usually the matter density, encode statistical estimators
+that link theoretic models and observation. \cite{adamek_2016,springel_2020} are
+examples of some of the most recent such simulations.
+
+There are many different \fft\ algorithms as well as many implementations of
+those. The most notable of such implementations is the \fftw\ \cite{FFTW05}
+free-software library for C language, which boasts itself of being the fastest
+implementation at least for CPUs---note there exists 
+implementations for GPUs such as
+\cufft\footnote{\url{docs.nvidia.com/cuda/pdf/CUFFT_Library.pdf}}.
+Despite \fft\ being well known and widely used, there is no C++ library 
+counterpart of \fftw,
+and to our knowledge there is not a single \fft\ implementation templated on the
+type.
+
+This \gsoc\ project aimed to implement a new \fft\ library
+within \boostmath\footnote{\url{www.boost.org/libs/math}}---a large mathematical
+library that
+offers high-performance functions of pure and applied mathematics
+but no \fft\ support before this date. 

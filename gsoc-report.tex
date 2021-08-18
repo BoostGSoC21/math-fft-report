@@ -1,0 +1,82 @@
+% rubber: bibtex.path /home/lagrange/Documents/gsoc/2021/math-fft-report
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{hyperref}
+\usepackage{bold-extra}
+
+\usepackage{listings}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+
+\hypersetup{
+    colorlinks=false,
+    hidelinks=true
+}
+\bibliographystyle{plain} % FIXME: styles are not found
+
+\newcommand{\fft}{\textsc{fft}}
+\newcommand{\dft}{\textsc{dft}}
+\newcommand{\cdc}{\textsc{cdc}}
+\newcommand{\gsoc}{\textsc{gsoc}}
+\newcommand{\ntt}{\textsc{ntt}}
+\newcommand{\mpi}{\textsc{mpi}}
+\newcommand{\raii}{\textsc{raii}}
+\newcommand{\api}{\textsc{api}}
+\newcommand{\boost}{\textit{Boost}}
+\newcommand{\boostmath}{\textit{Boost.Math}}
+\newcommand{\boostmpi}{\textit{Boost.MPI}}
+\newcommand{\fftw}{\textit{FFTW}}
+\newcommand{\cufft}{\textit{CUFFT}}
+\newcommand{\gcc}{\textit{GCC}}
+\newcommand{\gnu}{\textit{GNU}}
+\newcommand{\gsl}{\textit{GSL}}
+\newcommand{\alglib}{\textit{ALGLIB}}
+
+\newcommand{\Ring}{\mathcal{R}}
+\newcommand{\Order}{\mathcal{O}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\xroot}[1]{$#1^{\mathrm{th}}$-root}
+
+\newcommand{\comment}[1]{\textrm{\textit{#1}}}
+\newcommand{\function}[1]{\textbf{#1}}
+\newcommand{\variable}[1]{\textit{#1}}
+
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\title{\gsoc\ 2021\\\boostmath: \fft\ Utilities}
+\author{Eduardo Quintana Miranda, Christopher Kormanyos, Janek Kozicki}
+
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+We propose to bring Fast Fourier Transform (FFT) capabilities
+inside the Boost.Math library. This project answers the need for a C++ library
+of this sort, and the lack of FFT within Boost.Math.
+Our main goal is to design a modern C++ template interface for FFT
+that supports multiple types that satisfy the Ring Axioms and specialized
+routines for types that represent real and complex numbers.
+\end{abstract}
+
+\tableofcontents
+\input intro
+\input quickstart
+\input state
+\input api
+\input benchmarks
+    
+\bibliography{biblio}
+
+\appendix
+\input app_ring
+
+\end{document}
