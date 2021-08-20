@@ -242,7 +242,19 @@ for (auto x : AB)
 \end{lstlisting}
 
 \subsection{Real \dft}
-
+Real valued \dft\ are best handled by Boost.Math.FFT real oriented
+interface. The plan-like classes specialized for real numbers are denoted
+\verb|bsl_rdft|, \verb|gsl_rdft| and \verb|fftw_rdft|, 
+representing the three
+engines \bsl, \gsl\ and \fftw\ respectively. They share the same interface hence
+it is enough to describe only the member functions of \verb|bsl_rdft|.
+The real methods take advantage of the symmetries involved in the real valued
+\dft s described in Subsection \ref{subsec:real}. In principle one could compute
+those real transforms using complex numbers and the complex interface (eg. by
+setting to zero the imaginary part of the input and ignoring the halfcomplex
+symmetry), but the real routines will perform
+half of the operations and occupy half the space in memory than the complex
+unconstrained counterpart.
 \begin{lstlisting}[language=C++,caption=Real plan.]
 template< class Real = double, 
           class Allocator =  std::allocator<Real> >
