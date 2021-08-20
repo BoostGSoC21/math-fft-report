@@ -9,6 +9,7 @@
 \usepackage{subfigure}
 \usepackage{hyperref}
 \usepackage{bold-extra}
+\usepackage{tikz}
 
 \usepackage{listings}
 \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
@@ -21,6 +22,8 @@
 
 \newcommand{\fft}{\textsc{fft}}
 \newcommand{\dft}{\textsc{dft}}
+\newcommand{\dftf}{\textsc{dft}_{\textrm{forward}}}
+\newcommand{\dftb}{\textsc{dft}_{\textrm{backward}}}
 \newcommand{\cdc}{\textsc{cdc}}
 \newcommand{\gsoc}{\textsc{gsoc}}
 \newcommand{\ntt}{\textsc{ntt}}
@@ -40,13 +43,18 @@
 \newcommand{\Ring}{\mathcal{R}}
 \newcommand{\Order}{\mathcal{O}}
 \newcommand{\Complex}{\mathbb{C}}
+\newcommand{\hComplex}{\frac{1}{2}\mathbb{C}}
 \newcommand{\Real}{\mathbb{R}}
 \newcommand{\Integer}{\mathbb{Z}}
 \newcommand{\xroot}[1]{$#1^{\mathrm{th}}$-root}
+\DeclareMathOperator{\real}{real}
+\DeclareMathOperator{\imag}{imag}
 
 \newcommand{\comment}[1]{\textrm{\textit{#1}}}
 \newcommand{\function}[1]{\textbf{#1}}
 \newcommand{\variable}[1]{\textit{#1}}
+
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
 
 \newtheorem{example}{Example}
 \newtheorem{definition}{Definition}

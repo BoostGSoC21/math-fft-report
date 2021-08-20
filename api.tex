@@ -1,128 +1,174 @@
 \section{Detailed API}
+Boost.Math.FFT brings two kinds of interfaces: one-time and planned transforms.
+The first one is inspired by the standard library's \texttt{std::transform} 
+and the second by \fftw's plan interface. Listings
+\ref{ls:complex_dft_transform} and \ref{ls:complex_dft_plan} are two examples of
+the use of the one-time and planned interfaces respectively.
 
-This project proposes the design and implementation of a modern C++ template
-interface for \dft\ within \boostmath\ library. The implementation will consist
-of a combination of routines written by the author based on well known \fft\
-algorithms and oriented to solve the \dft\ problem as presented in the
-Definition \ref{def:dft} for any data type that satisfies the Ring axioms, 
-and a back-end to the \fftw\ library for the special cases of
-the complex and real number types supported by \fftw. We aim to design an \api\
-that is flexible and powerful, so that the implementation can be adapted
-seamlessly to different back-ends without significant performance losses.
+The planned transform is used with
+the declaration of a plan variable and subsequently calling its methods.
+The internal state of the plan is determined by the size of the \dft\ transform,
+and throughout its life it caches the necessary data and memory allocation
+needed to perform \dft s on request. In principle it should be faster to call a
+method of a plan, than the equivalent routine from the one-time interface.
 
-\lstset{columns=flullflexible,basicstyle=\ttfamily}
+The library's interface can be further classified according to the domain where
+the \dft\ is applied: let it be complex numbers, real and halfcomplex, or a
+purely algebraic set satisfying the ring axioms. This distinction is necessary
+because all three behave differently and the user expects different interfaces.
 
-A possible user interface for 1-dimensional \dft{}s could 
-consist of a set of overloads of a single function \texttt{dft}.
-Two of which could handle the general case of \dft\ as in Definition
-\ref{def:dft}: see
-Listings \ref{ls:dft1} for the in-place transformation 
-and Listings \ref{ls:dft2} for a transformation that is saved into a different memory
-location. The size of the \dft\ is deduced 
-as $n=$\texttt{std::distance(beg1,end1)} and the root of unity \texttt{w} for this
-size must be provided by the user. These routines can compute \dft{}s for any
-type that satisfy the Ring axioms as well as complex numbers.
+Consider the complex case. There are only two types of \dft\ we can perform on
+a $\Complex^n$ vector, they are the \verb|forward| and the \verb|backward|, 
+because there are only two roots of unity in that domain:
+$w = \exp( - 2 \pi i/n)$ 
+and
+$w^{-1} = \exp( 2 \pi i/n)$.
+While in general for an algebraic transform on a type that satisfies the ring
+axioms the \dft\ engine has no way of knowing \emph{a priori} what is the root
+of unity $w$ and that one must be supplied by the user either to the constructor
+of the plan or as an extra argument to the one-time transform routine. In this
+case, once $w$ is know there are again only two types of \dft s: \verb|forward| 
+when we use $w$ or \verb|backward| when using $w^{-1}$.
 
-\begin{lstlisting}[language=C++,label=ls:dft1,caption=General case of the DFT in-place.]
-template<class InputIterator, class T> 
-void 
-dft(InputIterator beg1, InputIterator end1, 
-    T w /* root unity */ );
-\end{lstlisting}
+The real/halfcomplex interface works very differently from the complex and the
+algebraic. Since the result of any \dft\ on a $\Real^n$ vector yields always a
+vector in $\hComplex^n$ and viceversa; this interface contains the methods:
+\verb|real_to_halfcomplex| and \verb|halfcomplex_to_real| to emphasize that
+property. Because of the trivial relations between the results of the forward
+and backward transforms applied to real and/or halfcomplex data (see fig.
+\ref{fig:halfcomplex}) we do not provide a choice for forward or backward
+transform. \verb|real_to_halfcomplex| will in effect compute a forward \dft\ on
+a $\Real^n$ vector and \verb|halfcomplex_to_real| will compute a backward \dft\ on a
+$\hComplex^n$ vector. We also provide the methods \verb|real_to_complex|
+and \verb|complex_to_real| similar to the previous \verb|real_to_halfcomplex|
+and \verb|halfcomplex_to_real| respectively, where the halfcomplex part is
+represented in an array of $n$ complex numbers, hence keeping redundant values.
 
-% out-of-place DFT, the size is deduced by std::distance(beg1,end1)
-% the root of unity is supplied by the user
-\begin{lstlisting}[language=C++,label=ls:dft2,caption=General case of the DFT out-of-place]
-template<class InputIterator, class OutputIterator, class T> 
-void 
-dft(InputIterator beg1, InputIterator end1,
-    OutputIterator beg2, 
-    T w /* root unity */ );
-\end{lstlisting}
 
-\noindent Two other overloads of the complex \dft{}s are needed to release the user
-from the burden of computing the root of unity by himself and explicitely call
-the specialized back-end: see
-Listings \ref{ls:complex_dft1} and \ref{ls:complex_dft2}. The size of the \dft\
-is again deduced as $n=$\texttt{std::distance(beg1,end1)} and
-\texttt{complex\_dft}
-is an \texttt{enum class} that can have two states: \texttt{forward} or
-\texttt{backwards} that correspond to the roots of unity 
-$\exp(-i\, 2\pi/n)$
-and 
-$\exp(+i\, 2\pi/n)$ respectively,
-where $i=\sqrt{-1}$.
-% in-place complex DFT, the size is deduced by n=std::distance(beg1,end1)
-% the root of unity is deduced as exp(-I 2 pi/n) for t=forward and exp(I 2 pi/n)
-% for t = backwards
-\begin{lstlisting}[language=C++,label=ls:complex_dft1,caption=DFT for complex numbers in-place.]
-template<class InputIterator> 
-void
-dft(InputIterator beg1, InputIterator end1, 
-    complex_dft t);
-\end{lstlisting}
+%proposes the design and implementation of a modern C++ template
+%interface for \dft\ within \boostmath\ library. The implementation will consist
+%of a combination of routines written by the author based on well known \fft\
+%algorithms and oriented to solve the \dft\ problem as presented in the
+%Definition \ref{def:dft} for any data type that satisfies the Ring axioms, 
+%and a back-end to the \fftw\ library for the special cases of
+%the complex and real number types supported by \fftw. We aim to design an \api\
+%that is flexible and powerful, so that the implementation can be adapted
+%seamlessly to different back-ends without significant performance losses.
 
-% out-of-place complex DFT, the size is deduced by n=std::distance(beg1,end1)
-% the root of unity is deduced as exp(-I 2 pi/n) for t=forward and exp(I 2 pi/n)
-% for t = backwards
-\begin{lstlisting}[language=C++,label=ls:complex_dft2,caption=DFT for complex numbers out-of-place.]
-template<class InputIterator, class OutputIterator> 
-void
-dft(InputIterator beg1, InputIterator end1, 
-    OutputIterator beg2, 
-    complex_dft t);
-\end{lstlisting}
+% \lstset{columns=flullflexible,basicstyle=\ttfamily}
+% 
+% A possible user interface for 1-dimensional \dft{}s could 
+% consist of a set of overloads of a single function \texttt{dft}.
+% Two of which could handle the general case of \dft\ as in Definition
+% \ref{def:dft}: see
+% Listings \ref{ls:dft1} for the in-place transformation 
+% and Listings \ref{ls:dft2} for a transformation that is saved into a different memory
+% location. The size of the \dft\ is deduced 
+% as $n=$\texttt{std::distance(beg1,end1)} and the root of unity \texttt{w} for this
+% size must be provided by the user. These routines can compute \dft{}s for any
+% type that satisfy the Ring axioms as well as complex numbers.
+% 
+% \begin{lstlisting}[language=C++,label=ls:dft1,caption=General case of the DFT in-place.]
+% template<class InputIterator, class T> 
+% void 
+% dft(InputIterator beg1, InputIterator end1, 
+%     T w /* root unity */ );
+% \end{lstlisting}
+% 
+% % out-of-place DFT, the size is deduced by std::distance(beg1,end1)
+% % the root of unity is supplied by the user
+% \begin{lstlisting}[language=C++,label=ls:dft2,caption=General case of the DFT out-of-place]
+% template<class InputIterator, class OutputIterator, class T> 
+% void 
+% dft(InputIterator beg1, InputIterator end1,
+%     OutputIterator beg2, 
+%     T w /* root unity */ );
+% \end{lstlisting}
+% 
+% \noindent Two other overloads of the complex \dft{}s are needed to release the user
+% from the burden of computing the root of unity by himself and explicitely call
+% the specialized back-end: see
+% Listings \ref{ls:complex_dft1} and \ref{ls:complex_dft2}. The size of the \dft\
+% is again deduced as $n=$\texttt{std::distance(beg1,end1)} and
+% \texttt{complex\_dft}
+% is an \texttt{enum class} that can have two states: \texttt{forward} or
+% \texttt{backwards} that correspond to the roots of unity 
+% $\exp(-i\, 2\pi/n)$
+% and 
+% $\exp(+i\, 2\pi/n)$ respectively,
+% where $i=\sqrt{-1}$.
+% % in-place complex DFT, the size is deduced by n=std::distance(beg1,end1)
+% % the root of unity is deduced as exp(-I 2 pi/n) for t=forward and exp(I 2 pi/n)
+% % for t = backwards
+% \begin{lstlisting}[language=C++,label=ls:complex_dft1,caption=DFT for complex numbers in-place.]
+% template<class InputIterator> 
+% void
+% dft(InputIterator beg1, InputIterator end1, 
+%     complex_dft t);
+% \end{lstlisting}
+% 
+% % out-of-place complex DFT, the size is deduced by n=std::distance(beg1,end1)
+% % the root of unity is deduced as exp(-I 2 pi/n) for t=forward and exp(I 2 pi/n)
+% % for t = backwards
+% \begin{lstlisting}[language=C++,label=ls:complex_dft2,caption=DFT for complex numbers out-of-place.]
+% template<class InputIterator, class OutputIterator> 
+% void
+% dft(InputIterator beg1, InputIterator end1, 
+%     OutputIterator beg2, 
+%     complex_dft t);
+% \end{lstlisting}
+% 
+% \noindent Finally there will be another routine to compute convolutions: see
+% Listings \ref{ls:convolution}. That computes the \cdc\ of size
+% $n=$\texttt{std::distance(beg1,end1)}, using the root of unity \texttt{w} provided by the
+% user or, if omited, deduced as $\exp(-i\, 2\pi/n)$ for complex and real types only.
+% % Convolution, the size is deduced by n=std::distance(beg1,end1)
+% % the root of unity is optional and can be internally deduced for T = Real or
+% % complex<Real>
+% \begin{lstlisting}[language=C++,label=ls:convolution,caption=Convolution routine.]
+% template<class InputIterator, class OutputIterator, class T> 
+% void
+% convolution(InputIterator beg1, InputIterator end1, 
+%             InputIterator beg2,
+%             OutputIterator beg3, 
+%             T w /* root of unity, optional */);
+% \end{lstlisting}
 
-\noindent Finally there will be another routine to compute convolutions: see
-Listings \ref{ls:convolution}. That computes the \cdc\ of size
-$n=$\texttt{std::distance(beg1,end1)}, using the root of unity \texttt{w} provided by the
-user or, if omited, deduced as $\exp(-i\, 2\pi/n)$ for complex and real types only.
-% Convolution, the size is deduced by n=std::distance(beg1,end1)
-% the root of unity is optional and can be internally deduced for T = Real or
-% complex<Real>
-\begin{lstlisting}[language=C++,label=ls:convolution,caption=Convolution routine.]
-template<class InputIterator, class OutputIterator, class T> 
-void
-convolution(InputIterator beg1, InputIterator end1, 
-            InputIterator beg2,
-            OutputIterator beg3, 
-            T w /* root of unity, optional */);
-\end{lstlisting}
-
-\subsection{Deliverables}
-
-This project proposes to deliver at the end of the \gsoc-2021 a C++ library for
-computing \fft{}s, with the following components:
-\begin{itemize}
-    \item A template user interface for 1-dimensional \dft.
-    \item A template user interface for computing convolutions.
-    \item A back-end that wraps \fftw\ routines to handle the standard complex types
-    ie. \verb|std::complex| instantiated on \verb|float|,
-    \verb|double| and \verb|long double|.
-    \item A general purpose back-end, based on 
-    templates routines for computing \dft\ using the algorithms
-    mentioned in the previous section based on the weaker notion of rings and
-    roots of unity. 
-    This back-end already provides support for \ntt\ without the need to write
-    specialized routines.
-    \item Specialization for complex to complex \dft, with the use of the \fftw\
-    back-end whenever possible,
-    and tested support for Boost Multiprecision types such as
-    \verb|cpp_complex|.
-    \item Specialization for real to complex \dft, with the use of the \fftw\
-    back-end whenever possible/
-    \item Unit tests and benchmarks.
-    \item Documentation with examples.
-    %\item support for $D$-dimensional \dft{}s,
-    %\item (if time permits) with multithreaded capabilities.
-\end{itemize}
+%\subsection{Deliverables}
+% This project proposes to deliver at the end of the \gsoc-2021 a C++ library for
+% computing \fft{}s, with the following components:
+% \begin{itemize}
+%     \item A template user interface for 1-dimensional \dft.
+%     \item A template user interface for computing convolutions.
+%     \item A back-end that wraps \fftw\ routines to handle the standard complex types
+%     ie. \verb|std::complex| instantiated on \verb|float|,
+%     \verb|double| and \verb|long double|.
+%     \item A general purpose back-end, based on 
+%     templates routines for computing \dft\ using the algorithms
+%     mentioned in the previous section based on the weaker notion of rings and
+%     roots of unity. 
+%     This back-end already provides support for \ntt\ without the need to write
+%     specialized routines.
+%     \item Specialization for complex to complex \dft, with the use of the \fftw\
+%     back-end whenever possible,
+%     and tested support for Boost Multiprecision types such as
+%     \verb|cpp_complex|.
+%     \item Specialization for real to complex \dft, with the use of the \fftw\
+%     back-end whenever possible/
+%     \item Unit tests and benchmarks.
+%     \item Documentation with examples.
+%     %\item support for $D$-dimensional \dft{}s,
+%     %\item (if time permits) with multithreaded capabilities.
+% \end{itemize}
 
 \subsection{Future outlook}
-If this project is successful we will consider for next year to include support
-for multi-dimensional \dft{}s and the design and implementation for
-parallel \fft\ interfaces: shared and distributed memory. 
-The $D$-dimensional \mpi\ \dft\ is an issue we look forward to tackle
-using a scalable $(D-1)$-dimensional domain decomposition,
-similar to that proposed by \cite{pippig_13}.
-%built on top of the \boostmpi\ library
-%and the 1-dimensional \fft\ utilities of \boostmath\ to be developed this year.
+Describe the pending issues and plans for improvement:
+\begin{itemize}
+    \item Documentation inside boost,
+    \item optimization of the Boost routines,
+    \item multithreading,
+    \item multidimentional transforms,
+    \item to work in collaboration with boost.mpi to create distributed memory
+    transforms to tacke the $D$-dimentional scalability problem proposing a
+    $D-1$ domain decomposition similar to \cite{pippig_13}.
+\end{itemize}

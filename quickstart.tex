@@ -2,9 +2,10 @@
 
 Our interface was designed for easy of use. The user can start performing
 complex FFTs by just calling one of the \texttt{std::transform}-like routines
-\texttt{forward} or \texttt{backward}. See listings
-\ref{ls:complex_dft_transform}
-
+\texttt{forward} or \texttt{backward} that correspond to a Discrete Fourier
+Transform (DFT) in $\Complex^n$ space with the root of unity
+$\exp(-\frac{2\pi}{n} i)$ and $\exp(\frac{2\pi}{n} i)$ respectively.
+See listings \ref{ls:complex_dft_transform}
 \begin{lstlisting}[language=C++,label=ls:complex_dft_transform,caption=Simple complex FFT
 transform.]
 using fft_transform = ::boost::math::fft::bsl_transform;
@@ -12,5 +13,17 @@ std::vector< std::complex<double> > A{1.,2.,3.,4.},B;
 fft_transform::forward(A.cbegin(),A.cend(),std::back_inserter(B));
 fft_transform::backward(B.cbegin(),B.cend(),B.begin());
 \end{lstlisting}
+The size of the transform $n$, is deduced from the input range and the type
+complex representation is deduced from the input iterators.
 
+If multiple transforms of the same size are required, it is recommended to cache
+the engine internal state by using the plan-like interface.
+\begin{lstlisting}[language=C++,label=ls:complex_dft_plan,caption=Simple complex FFT
+Plan.]
+using fft_plan = ::boost::math::fft::bsl_dft;
+std::vector< std::complex<double> > A{1.,2.,3.,4.},B;
 
+fft_plan<std::complex<double>> P(A.size());
+P.forward(A.cbegin(),A.cend(),std::back_inserter(B));
+P.backward(B.cbegin(),B.cend(),B.begin());
+\end{lstlisting}

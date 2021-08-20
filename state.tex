@@ -48,8 +48,11 @@ instead of $w$ and taking into account and extra $\frac{1}{n}$ factor
     Then the \dft\ takes the form
     \begin{equation} 
         b_k = \sum_{j=0}^{n-1} e^{-\frac{2\pi i}{n} kj}  a_j,
+        \label{eq:complex}
     \end{equation}
-    often used in signal processing and physics.
+    often used in signal processing and physics and called the \emph{forward} \dft.
+    If we use instead $w^{-1} = \exp(2 \pi i/n)$ we are computing the
+    \emph{backward} \dft.
     \label{ex:complex}
 \end{example}
 
@@ -122,6 +125,81 @@ algorithms are used instead of $\Order(n^2)$ if we use equation
 (\ref{eq:convolution}) directly.
 
 \subsection{Real transforms}
+Very ofen, the applications of Fourier methods involve the \dft\ in its complex
+form (\ref{eq:complex}) where the input tuple $a = (a_0,a_1,\ldots,a_{n-1})$ are
+real numbers.
+The ouput tuple $b = (b_0,b_1,\ldots,b_{n-1})$ are complex numbers that satisfy
+the following \emph{conjugate symmetry} 
+\begin{equation}
+    b_{k} = b^*_{n-k}.
+    \label{eq:rfft_sym}
+\end{equation}
+This particular use case allows for an optimization in computation and memory of
+a factor of 2. First of all, because the output has $n$ degrees of freedom as
+the input; instead of $2n$ as it happens in general with $n$ unconstrained
+complex numbers. Instead of returning $n$ complex numbers, some interfaces like
+\fftw\ and \texttt{numpy}\footnote{\url{numpy.org}} return $\floor{n/2}+1$
+complex numbers, thus discarding spurious values.
+
+Formally, these type of transforms can be understood as a linear map from $\Real^n$ to the
+space of the so called \emph{halfcomplex} numbers $\hComplex^n$, ie.
+the subset of $\Complex^n$ that satisfy (\ref{eq:rfft_sym}).
+One can prove that both backward and forward \dft\ acting on a halfcomplex array
+$b$ yields $n$ real numbers, and the result of both the operations are related to
+each other by an index inversion. That is, let $b\in \hComplex^n$ if 
+$a = \dftf(b)$ and 
+$a' =\dftb(b)$, then $a,a'\in \Real^n$ and $a_k = a'_{n-k}$.
+Also, it can be show that for any $a\in\Real^n$ if $b=\dftf(a)$ then
+$b\in\hComplex^n$ and $b^* = \dftb(a)$, where $b^*\in\hComplex^n$ is the complex
+conjugate of $b$.
+Figure \ref{fig:halfcomplex}
+represents the 4 node graph obtained by repeated application of forward and
+backward \dft\ in $\Real^n$ or $\hComplex^n$ to summarize the previous
+description.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+    \node (a1) at (0,-2) {$a \in \Real^n$};
+    \node (a2) at (0,-4) {$a' \in \Real^n$};
+    \node (b1) at (3,-2) {$b \in \hComplex^n$};
+    \node (b2) at (3,-4) {$b^* \in \hComplex^n$};
+    \path[->] (a1) edge (b1) ;
+    \path[->] (a2) edge (b2) ;
+    \path[->] (b1) edge (a2) ;
+    \path[->] (b2) edge (a1) ;
+    \end{tikzpicture}
+    \caption{Real vectors (on the left) under \dft\ transformations yield
+    halfcomplex (on the right),
+    while halfcomplex yield real. The arrows indicate the result of the forward
+    \dft, the backward \dft's are found by inverting the arrows. Vector $b^*$ is
+    the complex conjugate of $b$ and $a'$ is related to $a$ by index inversion.}
+    \label{fig:halfcomplex}
+\end{figure}
+
+There are countless of ways to represent vectors of $\hComplex^n$.
+In our API we use a tuple of $n$ real numbers
+\[ 
+    (r_0,r_1,r_2,\ldots,r_{ \floor{n/2} },i_{\floor{n/2}+1},\ldots,i_{n-2},i_{n-1})
+\]
+where $r_k = \real(b_k)$ and $i_k = \imag(b_k)$.
+
+% 
+% The first point above makes me think that at this point we should have
+% separate classes to handle two types of transform philosophy: complex dft and
+% ring dft. Moving forward with this proposal will break the nice symmetry that
+% we previously have where ring transforms were handle as if they were complex,
+% with the underlying static type selection making all the work to select the
+% appropriate algorithms. On the bright side having these two api's will give
+% the user more control of what is being done and we no longer need is_complex
+% to select appropriate algorithms. Notice that ring transforms can also apply
+% to complex numbers, with the appropriate selection of the root of unity, this
+% is why I thought they might be unified at first.
+% 
+% If we introduce real-to-complex into the game, we could either expand the
+% complex dft class to accommodate this case or we could introduce a third class
+% specific to it. In any case I think we are likely bound to have template
+% parameters specifying the Real and the Complex types, maybe having by default
+% the following rule Real = Complex::value_type.
 
 \subsection{\fftw}
 \fftw\ \cite{FFTW05} is the \emph{de facto} library for computing \dft\ in the scientific
