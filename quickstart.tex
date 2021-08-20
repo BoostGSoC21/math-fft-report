@@ -1,9 +1,12 @@
 \section{Quickstart}
 
-Our interface was designed for easy of use. The user can start performing
+Boost.Math.FFT provides an interface to compute Fourier Transforms for different
+types using C++ templates.
+Its design aims to be easy to use.
+For instance the user can start performing 
 complex FFTs by just calling one of the \texttt{std::transform}-like routines
 \texttt{forward} or \texttt{backward} that correspond to a Discrete Fourier
-Transform (DFT) in $\Complex^n$ space with the root of unity
+Transform (\dft) in $\Complex^n$ space with the root of unity
 $\exp(-\frac{2\pi}{n} i)$ and $\exp(\frac{2\pi}{n} i)$ respectively.
 See listings \ref{ls:complex_dft_transform}
 \begin{lstlisting}[language=C++,label=ls:complex_dft_transform,caption=Simple complex FFT

@@ -44,6 +44,205 @@ and \verb|complex_to_real| similar to the previous \verb|real_to_halfcomplex|
 and \verb|halfcomplex_to_real| respectively, where the halfcomplex part is
 represented in an array of $n$ complex numbers, hence keeping redundant values.
 
+\subsection{Complex \dft}
+
+\begin{lstlisting}[language=C++]
+template< class Complex = std::complex<double>, 
+          class Allocator =  std::allocator<Complex> >
+class bsl_dft;
+\end{lstlisting}
+
+The backends \verb|gsl_dft| and \verb|fftw_dft| behave in the same way as
+\verb|bsl_dft|.
+
+\subsubsection{Member functions}
+
+\begin{lstlisting}[language=C++]
+template< class Complex, class Allocator >
+constexpr bsl_dft<Complex,Allocator>::bsl_dft(
+            unsigned int n, const Allocator& alloc = Allocator{} );
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void forward(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void backward(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+constexpr std::size_t size() const;
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+void resize(std::size_t new_size);
+\end{lstlisting}
+
+\subsubsection{One-time transform methods}
+
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void bsl_transform::forward(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void bsl_transform::backward(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+
+\subsection{Algebraic \dft}
+
+\begin{lstlisting}[language=C++]
+template< class T = std::complex<double>, 
+          class Allocator = std::allocator<T> >
+class bsl_algebraic_dft;
+\end{lstlisting}
+
+Remark: \gsl\ and \fftw\ libraries do not have the equivalent to this type of
+transform.
+
+\subsubsection{Member functions}
+
+\begin{lstlisting}[language=C++]
+template< class T, class Allocator >
+constexpr bsl_algebraic_dft<T,Allocator>::bsl_algebraic_dft(
+            unsigned int n, T w, const Allocator& alloc = Allocator{} );
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void forward(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void backward(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+constexpr std::size_t size() const;
+\end{lstlisting}
+
+% The fact is that the algebraic_dft does have a resize method, but resizing the
+% DFT here must be followed with a change of the internal root of unity w. A
+% correct resize method here requires two arguments: the new size and the new
+% value of w.
+% \begin{lstlisting}[language=C++]
+% void resize(std::size_t new_size);
+% \end{lstlisting}
+
+\subsubsection{One-time transform methods}
+
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt,
+         class T>
+void bsl_algebraic_transform::forward(
+       InputIt first1, InputIt last1, OutputIt d_first, const T w);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt,
+         class T>
+void bsl_algebraic_transform::backward(
+       InputIt first1, InputIt last1, OutputIt d_first, const T w);
+\end{lstlisting}
+
+\subsection{Real \dft}
+
+\begin{lstlisting}[language=C++]
+template< class Real = double, 
+          class Allocator =  std::allocator<Real> >
+class bsl_rdft;
+\end{lstlisting}
+
+The backends \verb|gsl_rdft| and \verb|fftw_rdft| behave in the same way as
+\verb|bsl_rdft|.
+
+\subsubsection{Member functions}
+
+\begin{lstlisting}[language=C++]
+template< class Real, class Allocator >
+constexpr bsl_rdft<Real,Allocator>::bsl_rdft(
+            unsigned int n, const Allocator& alloc = Allocator{} );
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void real_to_halfcomplex(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void real_to_complex(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void halfcomplex_to_real(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void complex_to_real(InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+constexpr std::size_t size() const;
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+void resize(std::size_t new_size);
+\end{lstlisting}
+
+\subsubsection{One-time transform methods}
+
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void bsl_real_transform::real_to_halfcomplex(
+       InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void bsl_real_transform::real_to_complex(
+       InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void bsl_real_transform::halfcomplex_to_real(
+       InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+\begin{lstlisting}[language=C++]
+template<class InputIt,
+         class OutputIt>
+void bsl_real_transform::complex_to_real(
+       InputIt first1, InputIt last1, OutputIt d_first);
+\end{lstlisting}
+
+\subsection{Convolution}
+    
+\begin{lstlisting}[language=C++]
+template<typename InputIt1,
+         typename InputIt2,
+         typename OutputIt>
+void bsl_transform::convolution(
+       InputIt1 first1, InputIt1 last1, InputIt2 first2, OutputIt d_first);
+\end{lstlisting}
+
+%  template<class RingType = std::complex<double>, class Allocator_t = std::allocator<RingType> >
+%  using bsl_dft = detail::complex_dft<detail::bsl_backend,RingType,Allocator_t>;
+%  
+%  template<class T = double, class Allocator_t = std::allocator<T> >
+%  using bsl_rdft = detail::real_dft<detail::bsl_rfft_backend,T,Allocator_t>;
+%  
+%  template<class RingType = std::complex<double>, class Allocator_t = std::allocator<RingType> >
+%  using bsl_algebraic_dft = detail::algebraic_dft<detail::bsl_backend,RingType,Allocator_t>;
+%  
+%  using bsl_transform = transform< bsl_dft<> >;
+%  using bsl_algebraic_transform = transform< bsl_algebraic_dft<> >;
+%  using bsl_real_transform = transform< bsl_rdft<> >;
 
 %proposes the design and implementation of a modern C++ template
 %interface for \dft\ within \boostmath\ library. The implementation will consist
@@ -161,14 +360,3 @@ represented in an array of $n$ complex numbers, hence keeping redundant values.
 %     %\item (if time permits) with multithreaded capabilities.
 % \end{itemize}
 
-\subsection{Future outlook}
-Describe the pending issues and plans for improvement:
-\begin{itemize}
-    \item Documentation inside boost,
-    \item optimization of the Boost routines,
-    \item multithreading,
-    \item multidimentional transforms,
-    \item to work in collaboration with boost.mpi to create distributed memory
-    transforms to tacke the $D$-dimentional scalability problem proposing a
-    $D-1$ domain decomposition similar to \cite{pippig_13}.
-\end{itemize}
