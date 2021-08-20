@@ -1,0 +1,25 @@
+\section{Conclusions}
+This \gsoc\ project has brought a modern C++ interface into \boostmath\ library.
+The current design allows the user to select from three possible backends:
+\gsl\, \fftw\ and the Boost licensed \bsl, all three with the same user
+interface. The classes and functions are templates on the variable type, though
+there are limits to the type of variables with the \gsl\ and \fftw\ backends.
+For instance, \gsl\ supports only double precision standard complex,
+while \fftw\ has support for single, double and quad precision standard complex.
+The \bsl\ backend, on the other hand, has been written
+completely in terms of templates, hence it works for any user provided type that
+represents complex numbers. 
+The novelty of our \dft\ design lies precisely in
+the exploitation of the C++ templates to abstract away the details of the
+underlying type. 
+The reach of this approach goes beyond the complex numbers, in fact we were able
+to write \fft s that work with any type that satisfy the algebraic ring axioms.
+A possible application of non-complex \fft s that our design is able to produce
+is the so called \emph{Number Theoretical Transform}, with possible application to the
+fast multiplication of big integers.
+
+
+There is still work to be done. The \api\ needs to be extended to include the very
+often requested \dft\ in multiple dimensions and support for multi-processor
+architectures. And the current implementation of the \bsl\ backend needs
+optimization.
