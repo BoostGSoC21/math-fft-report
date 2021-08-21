@@ -77,11 +77,16 @@ algebraic methods plus sine and cosine function for its internal real value type
 \verb|mpc_complex_50| as well.
 
 \subsubsection*{Member functions}
-\begin{lstlisting}[language=C++,caption=Complex plan constructor.]
+\begin{lstlisting}[language=C++,caption=Complex plan constructor.,label=ls:complex_plan]
 template< class Complex, class Allocator >
 constexpr bsl_dft<Complex,Allocator>::bsl_dft(
             unsigned int n, const Allocator& alloc = Allocator{} );
 \end{lstlisting}
+The constructor of a complex \dft\ plan takes two arguments (listing
+\ref{ls:complex_plan}): the first is an integer number $N$ that specifies the size of
+the transform, the second is a
+reference to an allocator (allocators are discussed in section
+\ref{subsec:allocators}).
 \begin{lstlisting}[language=C++,caption=Complex plan forward function.]
 template<class InputIt,
          class OutputIt>
@@ -125,11 +130,16 @@ Boost.Math.FFT has achieved this level of abtraction with the use of C++
 templates. There is not equivalent functionality in \gsl\ or \fftw\ libraries
 for this kind of transform, hence we only describe the \bsl\ plan-like backend
 called \verb|bsl_algebraic_dft|.
-\begin{lstlisting}[language=C++,caption=Algebraic plan.]
+\begin{lstlisting}[language=C++,caption=Algebraic plan.,label=ls:alg_plan]
 template< class T = std::complex<double>, 
           class Allocator = std::allocator<T> >
 class bsl_algebraic_dft;
 \end{lstlisting}
+The constructor of an algebraic \dft\ plan takes three arguments (listing
+\ref{ls:alg_plan}): the first is an integer number $N$ that specifies the size of
+the transform, the second is an $N$-root of unity $w$ and the third is a
+reference to an allocator (allocators are discussed in section
+\ref{subsec:allocators}).
 
 \subsubsection*{Member functions}
 \begin{lstlisting}[language=C++,caption=Algebraic plan constructor.]
@@ -254,23 +264,31 @@ those real transforms using complex numbers and the complex interface (eg. by
 setting to zero the imaginary part of the input and ignoring the halfcomplex
 symmetry), but the real routines will perform
 half of the operations and occupy half the space in memory than the complex
-unconstrained counterpart.
+unconstrained counterpart. 
 \begin{lstlisting}[language=C++,caption=Real plan.]
 template< class Real = double, 
           class Allocator =  std::allocator<Real> >
 class bsl_rdft;
 \end{lstlisting}
-
-The backends \verb|gsl_rdft| and \verb|fftw_rdft| behave in the same way as
-\verb|bsl_rdft|.
+Real plans, as well as the complex plans seen previously, are templates on the
+type that represents the real numbers. Again \gsl\ backend will work only for
+\verb|double| representations while \fftw\ supports \verb|float|, \verb|double|,
+and \verb|long double|, and \verb|boost::multiprecision::float128|. 
+The \bsl\ functions are all templates on the type,
+hence it will accept any type representing real numbers.
 
 \subsubsection*{Member functions}
 
-\begin{lstlisting}[language=C++,caption=Real plan constructor.]
+\begin{lstlisting}[language=C++,caption=Real plan constructor.,label=ls:real_plan]
 template< class Real, class Allocator >
 constexpr bsl_rdft<Real,Allocator>::bsl_rdft(
             unsigned int n, const Allocator& alloc = Allocator{} );
 \end{lstlisting}
+The constructor of a real \dft\ plan takes two arguments (listing
+\ref{ls:real_plan}): the first is an integer number $N$ that specifies the size of
+the transform, the second is a
+reference to an allocator (allocators are discussed in section
+\ref{subsec:allocators}).
 \begin{lstlisting}[language=C++,caption=Real to halfcomplex.]
 template<class InputIt,
          class OutputIt>
@@ -387,7 +405,7 @@ Table \ref{tab:transform} summarizes the naming of the one-time transform family
     \label{tab:transform}
 \end{table}
 
-\subsection{The allocator template parameter}
+\subsection{The allocator template parameter}\label{subsec:allocators}
 The plan-like interface has a template parameter named \verb|Allocator|.
 The plan uses the \emph{allocator} supplied through the constructor, to allocate
 all the internal heap memory necessary to compute \dft s.
