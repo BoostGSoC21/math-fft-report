@@ -27,7 +27,7 @@ While in general for an algebraic transform on a type that satisfies the ring
 axioms the \dft\ engine has no way of knowing \emph{a priori} what is the root
 of unity $w$ and that one must be supplied by the user either to the constructor
 of the plan or as an extra argument to the one-time transform routine. In this
-case, once $w$ is know there are again only two types of \dft s: \verb|forward| 
+case, once $w$ is known there are again only two types of \dft s: \verb|forward| 
 when we use $w$ or \verb|backward| when using $w^{-1}$.
 
 The real/halfcomplex interface works very differently from the complex and the
@@ -71,10 +71,13 @@ On the other hand, the implementation of \verb|bsl_dft| allows, in principle, to
 compute \dft s
 for any complex type as long as it has the essential complex
 algebraic methods plus sine and cosine function for its internal real value type.
-\verb|bsl_dft| can handle, besides the previously mentioned complex types,
+\verb|bsl_dft| can handle, for instance besides the previously mentioned complex types,
+also the family of \verb|boost::multiprecision::cpp_complex|
+and \verb|boost::multiprecision::mpc_complex| based on \verb|cpp_bin_float| and
+\verb|mpfr| real types respectively; eg.
 \verb|cpp_complex_50|, 
 \verb|cpp_complex_quad| and 
-\verb|mpc_complex_50| as well.
+\verb|mpc_complex_50|.
 
 \subsubsection*{Member functions}
 \begin{lstlisting}[language=C++,caption=Complex plan constructor.,label=ls:complex_plan]

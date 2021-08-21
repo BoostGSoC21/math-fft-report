@@ -125,7 +125,7 @@ algorithms are used instead of $\Order(n^2)$ if we use equation
 (\ref{eq:convolution}) directly.
 
 \subsection{Real transforms}\label{subsec:real}
-Very ofen, the applications of Fourier methods involve the \dft\ in its complex
+Very often, the applications of Fourier methods involve the \dft\ in its complex
 form (\ref{eq:complex}) where the input tuple $a = (a_0,a_1,\ldots,a_{n-1})$ are
 real numbers.
 The ouput tuple $b = (b_0,b_1,\ldots,b_{n-1})$ are complex numbers that satisfy
@@ -209,7 +209,7 @@ complexity of $\Order(n \log n)$ for any $n$-sized \dft. It does also
 $D$-dimensional transforms and it is able to exploit multi-processor hardware by
 either multi-threading or \mpi\ parallelizations. This library is highly portable
 and yet it is competitive in performance with hardware specific codes such as
-Intel's \emph{MKL}. On reason for the success of \fftw\ is its strategy to
+Intel's \emph{MKL}. One reason for the success of \fftw\ is its strategy to
 generate fixed size \fft\ routines at compile-time for $1\le n\le 64$ called \emph{codelets}.
 \dft{}s of a bigger size can be decomposed in smaller \dft{}s until the problem
 fits into one such codelets.
