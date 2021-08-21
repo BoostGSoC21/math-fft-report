@@ -17,25 +17,25 @@ computation time with respect to the complex transforms, see also table
 \ref{tab:benchmarks}.
 \begin{table}
     \centering
-    \begin{tabular}{rrr}
-        \dft\ size & $\Complex$ time (ms) & $\Real$ time (ms) \\
+    \begin{tabular}{rrrr}
+        \dft\ size & $\Complex$ time (ms) & $\Real$ time (ms) & speedup \\
         \hline
-4'096    &     2 &   1 \\
-16'384   &    10 &   7 \\
-65'536   &    53 &  37 \\
-262'144  &   262 & 185 \\
-1'048'576 &  1'238 & 891 \\
+4'096    &     2 &   1 & x2.0 \\
+16'384   &    10 &   7 & x1.4 \\
+65'536   &    53 &  37 & x1.4 \\
+262'144  &   262 & 185 & x1.4 \\
+1'048'576 &  1'238 & 891 & x1.4 \\
         \hline
-100    & 2     & 1 \\
-1'000   & 24    & 16 \\
-10'000  & 311   & 205 \\
-100'000 & 3'932  & 2'457 \\
-1'000'000& 47'359 & 28'466 \\
+100    & 2     & 1 & x2.0 \\
+1'000   & 24    & 16 & x1.5 \\
+10'000  & 311   & 205 & x1.5 \\
+100'000 & 3'932  & 2'457 & x1.6 \\
+1'000'000& 47'359 & 28'466 & x1.7 \\
         \hline
-109     &    4  &    4  \\
-1'009   &    56  &   56  \\
-10'009  &   801  &  801  \\
-100'003 &  10'107 &10'056  \\
+109     &    4  &    4  & x1.0\\
+1'009   &    56  &   56 & x1.0 \\
+10'009  &   801  &  801 & x1.0 \\
+100'003 &  10'107 &10'056  & x1.0 \\
     \end{tabular}
     \caption{Benchmarks for the \bsl\ backend, comparison of the real and
     complex \dft\ execution times. On top a series of powers of two sizes, in
