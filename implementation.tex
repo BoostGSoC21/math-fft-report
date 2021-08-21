@@ -1,1 +1,62 @@
 \section{Implementation}
+Boost.Math.FFT comes with a Boost licensed \fft\ engine here denoted as the
+\bsl\ backend. This section describes briefly how that engine was implemented.
+
+At the heart of the \bsl\ backend, lie three algorithms for the computation of
+\dft s, each one useful for a specific \dft\ size class. They are:
+\begin{itemize}
+    \item Cooley-Tukey's \fft, for powers of 2 sizes;
+    \item Good-Thomas' \fft, a generalization of the previous for composite
+    numbers;
+    \item and Rader's \fft, that works only for prime sizes.
+\end{itemize}
+\cite{duhamel1990} gives is very good review of the state of the art \fft\
+algorithms.
+When the engine is asked to compute a \dft\ for a given size $N$, it first needs
+to factorize $N$ in order to decide which algorithm is more convenient.
+If $N$ is a power of 2, then Cooley-Tukey's does all the work; if instead $N$
+is prime, then Rader's does the work; otherwise the data is passed to
+Good-Thomas'. Composite sized transforms within Good-Thomas algorithm will
+eventually decompose the $N$ sized \dft\ into smaller sized \dft s, in the
+current implementation up to the prime divisors of $N$. Then those prime sized
+\dft s are either a trivial size 2 \dft\ or solved using Rader's algorithm.
+
+Rader's algorithm itself will depend on other \fft\ algorithms, because
+internally all that it does is to represent the prime sized \dft\ into a 
+circular convolution whose size can be chosen freely. In our current
+implementation, the size of that convolution is chosen as the smallest power of
+2 that the algorithm permits. Then the convolution is computed using the
+convolution theorem by performing three \fft s that will eventually be handled
+by Cooley-Tukey's algorithm, due to the power of 2 size.
+This combination of algorithms makes the computation of \dft s of size
+$N$ within $\Order(N \log N)$ operations, regardless of $N$.
+The complex \bsl\ backend makes full use of the previous algorithmic machinery.
+
+When dealing with real \dft s (see section \ref{subsec:real}) in order to take
+advantage of the fact that only half of the complex data is needed in the
+output, each one of the three previous \fft\ must be pruned. They become
+completely new functions dedicated to that specific task.
+The backward transformation for real data goes from the halfcomplex space
+to the real space and that means that, unlike the complex \dft, the same forward
+algorithm cannot be re-used to produce backward transformations. But a new
+function must be written, basically undoing what the forward does in exactly the
+the reversed order. This is what is formally known as the algorithm's 
+\emph{flow graph reversal}. The real \bsl\ backend has a Cooley-Tukey equivalent
+for real-to-halfcomplex and its backward transform, as well as Good-Thomas
+pruned version and its respective backward transform. Unfortunately a Rader's
+real-to-halfcomlex version has not been implemented yet. Consequently
+real transforms have $\Order(N \log N)$ complexity, just like complex \dft s for
+any input size $N$, but the factor of 2 efficiency with respect to
+complex is only attained when $N$ is composite or a power of two.
+
+Purely algebraic \dft s are handled by very similar algorithms to the complex
+specializations described at the begining of this section. Cooley-Tukey's and
+Good-Thomas' algorithms can be readily be implemented with the sole knowledge or
+an $N$-root of unity $w$ provided by the user. However, Rader's algorithm is not
+attainable without the knowledge of another $M$-root of unity where $M$ is the
+size of the convolution that the \dft\ is transformed to. As a consequence \bsl\
+algebraic \dft\ engine is able to compute with order $\Order(N \log_2 N)$ the
+\dft s when $N$ is a power of 2, and 
+in $\Order(N (p_1 + p_2 + \ldots + p_k) )$ operations for other values of $N$
+(where the $p_k$ are the prime factors of $N$). That means the complexity is 
+$\Order(N^2)$ when $N$ is prime.

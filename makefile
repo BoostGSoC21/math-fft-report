@@ -1,6 +1,6 @@
 VPATH=plots
 docfiles:=gsoc-report.tex intro.tex state.tex api.tex app_ring.tex \
-    quickstart.tex benchmarks.tex future.tex conclusions.tex
+    quickstart.tex benchmarks.tex future.tex conclusions.tex implementation.tex 
 target:=gsoc-report.pdf
 main:=gsoc-report.tex
 command:=rubber
