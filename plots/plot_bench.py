@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 def parse_line(l):
     ls = l.split()
-    t = float(ls[1])
+    t = float(ls[1])*1e-6
     name,n = ls[0].split('/')
     n = int(n)
     name = name.split('_')[1]
