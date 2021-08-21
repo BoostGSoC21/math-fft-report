@@ -1,11 +1,41 @@
-\section{Future outlook}
-Describe the pending issues and plans for improvement:
+\section{Summary of features and future outlook}
+\boostfft\ is still in phase of development. This year's \gsoc\ has helped to
+kickstart with the project and the authors had made huge steps in order to
+present the library as it is today, such that basic functionalities like one
+dimensional \dft s are possible with theoretically optimal complexity. 
+Let us briefly list the features of the \boostfft\ in its current state:
 \begin{itemize}
-    \item Documentation inside boost,
-    \item optimization of the Boost routines,
-    \item multithreading,
-    \item multidimentional transforms,
-    \item to work in collaboration with \boostmpi\ to create distributed memory
-    transforms to tacke the $D$-dimentional scalability problem proposing a
-    $D-1$ domain decomposition similar to \cite{pippig_13}.
+    \item the library brings two template \api s for computing \dft s in one
+    dimension, ie. one-time transforms and plans;
+    \item the user can choose between \gsl, \fftw\ and our Boost licensed \bsl,
+    backends;
+    \item besides complex \dft s, the library provides a specialized interface
+    for real numbers that sets the ground for the real transform optimization
+    (usually a factor of 2 in computation and memory);
+    \item in addition the \bsl\ backend is able to compute \dft\ in the more
+    abstract sense of ring algebras leading to a higher class of \dft s like the
+    \emph{Number Theoretical Transform};
+    \item memory allocation can be completely controlled by the user (at least
+    in the case of the \bsl\ backend) through the template parameter supplied
+    allocator;
+    \item the library also supplies a convolution function for complex
+    sequences;
+    \item the \bsl\ backend has theoretically optimal complexity for real and
+    complex transforms $\Order(N \log N)$ for any size $N$, it is able to
+    exploit the real transform optimization for composite sizes and its
+    algebraic \dft\ engine has
+    $\Order(N \log N)$ complexity for highly composite sizes (eg. powers of 2).
+\end{itemize}
+Some of the issues, features and improvements that the authors would like address
+for future development are listed below:
+\begin{itemize}
+    \item add the documentation inside \boostmath\ webpage;
+    \item optimize the \bsl\ backend to use less scratch memory and produce
+    faster computation times;
+    \item add support for multithreading;
+    \item add support for multidimentional \dft\ transforms (possibly in
+    coordination with the \boostublas\ library);
+    \item work in collaboration with \boostmpi\ team to create distributed memory
+    transforms and tacke the $D$-dimentional scalability problem proposing a
+    $D-1$ domain decomposition similar to \cite{pippig_13};
 \end{itemize}
