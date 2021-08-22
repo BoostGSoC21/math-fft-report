@@ -70,11 +70,12 @@ precision types
 On the other hand, the implementation of \verb|bsl_dft| allows, in principle, to
 compute \dft s
 for any complex type as long as it has the essential complex
-algebraic methods plus sine and cosine function for its internal real value type.
+algebraic methods plus sine and cosine functions for its internal real
+\verb|value_type|.
 \verb|bsl_dft| can handle, for instance besides the previously mentioned complex types,
-also the family of \verb|boost::multiprecision::cpp_complex|
-and \verb|boost::multiprecision::mpc_complex| based on \verb|cpp_bin_float| and
-\verb|mpfr| real types respectively; eg.
+also the family of \verb|boost::multiprecision|'s \verb|cpp_complex|
+and \verb|mpc_complex| based on \verb|cpp_bin_float| and
+\verb|mpfr_float_backend| real types respectively; eg.
 \verb|cpp_complex_50|, 
 \verb|cpp_complex_quad| and 
 \verb|mpc_complex_50|.
